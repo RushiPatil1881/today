@@ -1,12 +1,12 @@
 pipeline {
   agent any
-    
+    tools {nodejs "node"}
     
   stages {
     stage("Clone code from GitHub") {
             steps {
                 script {
-                    checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUB_CRD', url: 'https://github.com/RushiPatil1881/hello.git']])
+                    checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'GITHUB_CRD', url: 'https://github.com/RushiPatil1881/hello.git']])
                 }
             }
         }
@@ -15,7 +15,7 @@ pipeline {
     stage('Build Docker Image') {
         steps {
             script {
-                sh 'docker build -t rushidockerhub1881/helloapp .'
+                sh 'docker build -t rushidockerhub1881/todayapp .'
                 
             }
             
@@ -32,7 +32,7 @@ pipeline {
                     sh 'docker login -u ${usernameDocker} -p ${passwordDocker}'
                     
                 }
-                sh 'docker push rushidockerhub1881/helloapp:latest'
+                sh 'docker push rushidockerhub1881/todayapp:latest'
                 
             }
         }
@@ -42,7 +42,7 @@ pipeline {
     stage('eks cluster setup on jenkins') {
         steps {
             script{
-                sh ('aws eks update-kubeconfig --name eks-1 --region us-east-1')
+                sh ('aws eks update-kubeconfig --name eks1881 --region ap-south-1')
                 sh "kubectl get ns"
                 }
             
@@ -54,7 +54,7 @@ pipeline {
         steps {
             script 
             {
-                sh "kubectl apply -f deployment.yaml"
+                sh "kubectl apply -f nodejsapp.yaml"
                 
             }
             
